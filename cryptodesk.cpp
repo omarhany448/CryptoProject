@@ -8,6 +8,7 @@
 #include <QGraphicsDropShadowEffect>
 #include <QRegularExpression>
 #include <QInputDialog>
+#include <QSettings>
 
 // Include all cipher headers
 <<<<<<< HEAD
@@ -46,6 +47,24 @@ CryptoDesk::CryptoDesk(QWidget *parent)
 
 <<<<<<< HEAD
 =======
+// ----- Dark/Light Styles -----
+    QString darkStyle = R"(
+        QWidget { background-color: #1e1e1e; color: #f0f0f0; font-family: Segoe UI, Helvetica, Arial; font-size: 11pt; }
+        QLineEdit, QPlainTextEdit, QComboBox { background-color: #2d2d30; color: #ffffff; border: 1px solid #3c3c3c; border-radius: 5px; padding: 5px; }
+        QPushButton { background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #138496, stop:1 #138496); color: #ffffff; border-radius: 6px; padding: 8px 15px; }
+        QPushButton:hover { background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #17a2b8, stop:1 #17a2b8); }
+    )";
+
+    QString lightStyle = R"(
+        QWidget { background-color: #f0f0f0; color: #000000; font-family: Segoe UI, Helvetica, Arial; font-size: 11pt; }
+        QLineEdit, QPlainTextEdit, QComboBox { background-color: #ffffff; color: #000000; border: 1px solid #ccc; border-radius: 5px; padding: 5px; }
+        QPushButton { background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #000000, stop:1 #000000); color: #ffffff; border-radius: 6px; padding: 8px 15px; }
+        QPushButton:hover { background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #d0d0d0, stop:1 #b0b0b0);
+                            color: #000000;
+                        }
+    )";
+
+    
     // ----- Header -----
 >>>>>>> master
     QLabel *appTitle = new QLabel("CryptoDesk");
@@ -95,17 +114,41 @@ CryptoDesk::CryptoDesk(QWidget *parent)
         historyDialog->show();
     });
 
+ // ----- Dark/Light Theme Button -----
+    QPushButton *themeBtn = new QPushButton("🌙");
+    themeBtn->setCursor(Qt::PointingHandCursor);
+    themeBtn->setStyleSheet(
+        "QPushButton { background-color: transparent; color: #17a2b8; font-weight: bold; font-size: 14px; border-radius: 15px; border: none; }"
+        "QPushButton:hover { color: white; background-color: #138496; }"
+        );
 
->>>>>>> master
-    QHBoxLayout *headerLayout = new QHBoxLayout();
+    bool isDark = true;
+    this->setStyleSheet(darkStyle);
+
+    connect(themeBtn, &QPushButton::clicked, [=, &isDark]() mutable {
+        if(isDark) {
+            this->setStyleSheet(lightStyle);
+            themeBtn->setText("☀️");
+            appTitle->setStyleSheet("font-size: 22px; font-weight: bold; color: black; margin-left: 40px;");
+            isDark = false;
+        } else {
+            this->setStyleSheet(darkStyle);
+            themeBtn->setText("🌙");
+            appTitle->setStyleSheet("font-size: 22px; font-weight: bold; color: white; margin-left: 40px;");
+            isDark = true;
+        }
+        QSettings settings("MyCompany", "CryptoDesk"); // حفظ الثيم باستخدام QSettings
+        settings.setValue("isDarkTheme", isDark);
+    });
+
+QHBoxLayout *headerLayout = new QHBoxLayout();
+    headerLayout->addStretch();
     headerLayout->addStretch();
     headerLayout->addWidget(appTitle);
     headerLayout->addStretch();
     headerLayout->addWidget(aboutBtn);
-<<<<<<< HEAD
-
-=======
     headerLayout->addWidget(historyBtn);
+    headerLayout->addWidget(themeBtn, 0, Qt::AlignRight);
 
     // ----- Input Fields -----
 >>>>>>> master
@@ -153,6 +196,7 @@ CryptoDesk::CryptoDesk(QWidget *parent)
     QLabel *labelAlgo = new QLabel("Algorithm:");
     algoCombo = new QComboBox();
     algoCombo->addItems({
+        "Select an algorithm",
         "Caesar Cipher", "Playfair Cipher", "Hill Cipher (2x2)",
         "Multiplicative Cipher", "Affine Cipher", "DNA Cipher",
         "Vigenère Cipher", "Autokey Cipher", "Vernam Cipher",
@@ -169,17 +213,9 @@ CryptoDesk::CryptoDesk(QWidget *parent)
     helpBtn->setCursor(Qt::PointingHandCursor);
     helpBtn->setToolTip("Algorithm Guide");
     helpBtn->setStyleSheet(
-        "QPushButton {"
-        "   background-color: transparent;"
-        "   color: white;"
-        "   font-weight: bold;"
-        "   font-size: 18px;"
-        "   border-radius: 15px;"
-        "   border: 1px solid white;"
-        "   padding: 0px;"
-        "}"
-        "QPushButton:hover {"
-        "   background-color: #138496;"
+        "QPushButton { background-color: transparent; color: #138496; font-weight: bold; font-size: 18px; border-radius: 15px; border: 1px solid white; padding: 0px; }"
+        "QPushButton:hover { background-color: white; }"
+        );
 <<<<<<< HEAD
         "}");
 =======
